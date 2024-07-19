@@ -11,6 +11,8 @@ import {
 import storage from 'redux-persist/lib/storage';
 import coinMarketDataReducer from './features/coinMarketData/coinMarketDataSlice'
 import { PersistGate } from 'redux-persist/integration/react'
+import watchList from './features/watchList/watchList';
+import recentlyViewed from './features/recentlyViewed/recentlyViewed';
 
 
 const persistConfig = {
@@ -21,6 +23,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     coinMarketData: coinMarketDataReducer,
+    watchList: watchList,
+    recentlyViewed: recentlyViewed,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

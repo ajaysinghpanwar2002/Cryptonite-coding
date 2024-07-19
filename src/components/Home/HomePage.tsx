@@ -2,7 +2,7 @@
 
 import React, { useEffect, useCallback } from 'react';
 import LineChart from "../chart/LineChart";
-import { fetchCoinGeckoData } from "../fetchCoinGeckoData";
+import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks/hooks';
 import { setData, setLastFetchTime } from '../../lib/store/features/coinMarketData/coinMarketDataSlice';
 
@@ -31,7 +31,8 @@ function HomePage() {
             const tempData: CoinMarketData[] = [];
             for (const coin of coinNames) {
                 const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart/range?vs_currency=${currency}&from=${previousYearUnixTimestamp}&to=${currentUnixTimestamp}`;
-                const coinData = await fetchCoinGeckoData(url);
+                const coinData = []
+                // const coinData = await fetchCoinGeckoData(url);
                 if (coinData && coinData['market_caps']) {
                     tempData.push(coinData);
                 } else {

@@ -4,6 +4,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ThemeProviderWrapper from "./ThemeProvider";
 import Navbar from "@/components/Header/Navbar";
+import Sidebar from "@/components/Sidebar/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,14 @@ export default function RootLayout({
         <ThemeProviderWrapper>
           <StoreProvider>
             <Navbar />
-            {children}
+            <div className="flex">
+              <div className="w-8/12">
+                {children}
+              </div>
+              <div className="w-4/12">
+                <Sidebar/>
+              </div>
+            </div>
           </StoreProvider>
         </ThemeProviderWrapper>
       </body>
