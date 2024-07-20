@@ -6,6 +6,8 @@ import LineChart from '@/components/chart/LineChart';
 import GeneralInformation from '@/components/Product/GeneralInformation';
 import MarketData from '@/components/Product/MarketData';
 import { useTheme } from 'next-themes';
+import { useAppDispatch } from "@/lib/store/hooks/hooks";
+import { addCoin } from '@/lib/store/features/recentlyViewed/recentlyViewed';
 
 
 interface CoinMarketData {
@@ -14,115 +16,158 @@ interface CoinMarketData {
     total_volumes: number[][];
 }
 
-function Page({ params }) {
-    const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
-    const [productDetails, setProductDetails] = useState<any>({});
-    const [isLoading, setIsLoading] = useState(false); // Added loading state
-    const currency = 'inr';
-    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
-    const coinName = params.id;
+interface TimeRangeButtonsProps {
+    timeRange: number;
+    setTimeRange: (index: number) => void;
+    timeLabels: string[];
+}
+
+// ShimmerEffect Component
+const ShimmerEffect = () => {
     const { theme } = useTheme();
-
-    const timeRangesInSeconds = [86400, 604800, 2592000, 31536000, 94608000, 157680000]; // 1 day, 1 week, 1 month, 1 year, 3 years, 5 years in seconds
-    const timeLabels = ['1d', '1w', '1m', '1y', '3y', '5y'];
-    const [timeRange, setTimeRange] = useState(0);
-    let calculateTimeRange = currentUnixTimestamp - timeRangesInSeconds[timeRange];
-
-    const [dataType, setDataType] = useState<'prices' | 'market_caps' | 'total_volumes'>('market_caps');
-
-    const ShimmerEffect = () => (
+    return (
         <div className={`w-full h-96 overflow-hidden relative rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-400'}`}>
             <div className="shimmer h-full"></div>
         </div>
     );
+};
 
-    
-    const ShimmerProductDetails = () => {
-        return (
-            <div className="animate-pulse space-y-4">
-                <div className="h-6 bg-gray-300 rounded"></div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {Array.from({ length: 6 }).map((_, index) => (
-                        <div key={index} className="h-14 bg-gray-300 rounded"></div>
-                    ))}
+// DataTypeButtons Component
+const DataTypeButtons = ({ dataType, setDataType }) => {
+    const { theme } = useTheme();
+    return (
+        <div className='flex justify-around w-3/6'>
+            {['prices', 'market_caps', 'total_volumes'].map((type, index) => (
+                <button
+                    key={index}
+                    onClick={() => setDataType(type)}
+                    className={`rounded-xl px-4 py-1 border-2 ${theme === 'dark' ? 'border-gray-600' : 'border-slate-300'} ${dataType === type ? (theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100') : ''}`}
+                >
+                    {type.replace('_', ' ')}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+// TimeRangeButtons Component
+const TimeRangeButtons: React.FC<TimeRangeButtonsProps> = ({ timeRange, setTimeRange, timeLabels }) => {
+    const { theme } = useTheme();
+    return (
+        <div className='flex justify-around w-3/6'>
+            {timeLabels.map((label, index) => (
+                <button
+                    key={index}
+                    onClick={() => setTimeRange(index)}
+                    className={`rounded-xl px-4 py-1 border-2 ${theme === 'dark' ? 'border-gray-600' : 'border-slate-300'} ${index === timeRange ? (theme === 'dark' ? 'bg-gray-700' : 'bg-slate-100') : ''}`}
+                >
+                    {label}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+const ShimmerProductDetails = () => {
+    return (
+        <div className='p-8'>
+            <div className="p-6 max-w-full mx-auto bg-gray-800 rounded-xl shadow-md space-y-4 animate-pulse">
+                <div className="flex items-center space-x-4">
+                    <div className="rounded-full bg-gray-400 h-12 w-12"></div>
+                    <div className="flex-1">
+                        <div className="h-6 bg-gray-400 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-400 rounded w-1/2 mt-2"></div>
+                    </div>
                 </div>
+                <div className="space-y-3">
+                    <div className="h-4 bg-gray-400 rounded w-1/4"></div>
+                    <div className="h-4 bg-gray-400 rounded w-1/4"></div>
+                </div>
+                <div className="space-y-4">
+                    <div className="h-4 bg-gray-400 rounded w-full"></div>
+                    <div className="h-4 bg-gray-400 rounded w-full"></div>
+                    <div className="h-4 bg-gray-400 rounded w-5/6"></div>
+                </div>
+                <div className="space-y-2">
+                    <div className="h-4 bg-gray-400 rounded w-1/4"></div>
+                    <div className="flex space-x-2">
+                        <div className="h-6 bg-gray-400 rounded w-1/5"></div>
+                        <div className="h-6 bg-gray-400 rounded w-1/5"></div>
+                        <div className="h-6 bg-gray-400 rounded w-1/5"></div>
+                        <div className="h-6 bg-gray-400 rounded w-1/5"></div>
+                    </div>
+                </div>
+                <div className="h-4 bg-gray-400 rounded w-1/4"></div>
             </div>
-        );
-    };
+        </div>
+    );
+};
 
+// Main Page Component
+function Page({ params }) {
+    const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
+    const [productDetails, setProductDetails] = useState<any>({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [marketCapLoading, setMarketCapLoading] = useState(false);
+    const currency = 'inr';
+    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
+    const coinName = params.id;
+    const timeRangesInSeconds = [86400, 604800, 2592000, 31536000, 94608000, 157680000]; // 1 day, 1 week, 1 month, 1 year, 3 years, 5 years in seconds
+    const timeLabels = ['1d', '1w', '1m', '1y', '3y', '5y'];
+    const [timeRange, setTimeRange] = useState(0);
+    let calculateTimeRange = currentUnixTimestamp - timeRangesInSeconds[timeRange];
+    const [dataType, setDataType] = useState<'prices' | 'market_caps' | 'total_volumes'>('market_caps');
+    const dispatch = useAppDispatch();
+    
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true); // Start loading
+            setMarketCapLoading(true);
             try {
                 const data = await fetchCoinGeckoData(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
                 setMarketCapProduct([data]);
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             } finally {
-                setIsLoading(false); // End loading
+                setMarketCapLoading(false);
             }
         };
-
         fetchData();
-    }, [coinName, timeRange]); // Add timeRange to the dependency array
-
+    }, [coinName, timeRange]);
+    
     useEffect(() => {
         const fetchProductDetails = async () => {
-            setIsLoading(true); // Start loading
+            setIsLoading(true);
+            dispatch(addCoin(params.id));
             try {
                 const data = await fetchCoinGeckoData(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
                 setProductDetails(data);
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             } finally {
-                setIsLoading(false); // End loading
+                setIsLoading(false);
             }
         };
-
         fetchProductDetails();
     }, [coinName]);
 
-    if (marketCapProduct.length === 0) return <ShimmerEffect />
-    if (productDetails.length === 0) return <ShimmerProductDetails />
-
+    if (isLoading) return <ShimmerProductDetails />;
+    if (marketCapLoading) return <ShimmerEffect />;
 
     return (
-        <div className="">
-            <div className='p-4'>
-                <GeneralInformation data={productDetails} />
-
-                <MarketData data={productDetails} />
-
-                <div className="text-xl font-bold mb-4 p-4">
-                    Charts Section
-                </div>
-
-                <div className='flex justify-center'>
-                    <div className='flex justify-around w-3/6'>
-                        {['prices', 'market_caps', 'total_volumes'].map((type, index) => (
-                            <button key={index} onClick={() => setDataType(type)} className={`rounded-xl px-4 py-1 border-2 border-slate-300 ${dataType === type ? 'bg-gray-500' : ''}`}>
-                                {type.replace('_', ' ')}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div className='mt-5 p-4'>
-                    {marketCapProduct.length > 0 &&
-                        (
-                            <LineChart data={marketCapProduct.map(d => d[dataType])} coinNames={[coinName]} />
-                        )}
-                </div>
-
-                <div className='flex items-center justify-center mt-4'>
-                    <div className='flex justify-around w-3/6 '>
-                        {timeLabels.map((label, index) => (
-                            <button key={index} onClick={() => setTimeRange(index)} className='rounded-xl px-4 py-1 border-2 border-slate-300'>
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+        <div className='p-4'>
+            <GeneralInformation data={productDetails} />
+            <MarketData data={productDetails} />
+            <div className="text-xl font-bold mb-4 p-4">Charts Section</div>
+            <div className='flex justify-center'>
+                <DataTypeButtons dataType={dataType} setDataType={setDataType} />
+            </div>
+            <div className='mt-5 p-4'>
+                {marketCapProduct.length > 0 && (
+                    <LineChart data={marketCapProduct.map(d => d[dataType])} coinNames={[coinName]} />
+                )}
+            </div>
+            <div className='flex items-center justify-center mt-4'>
+                <TimeRangeButtons timeRange={timeRange} setTimeRange={setTimeRange} timeLabels={timeLabels} />
             </div>
         </div>
     );

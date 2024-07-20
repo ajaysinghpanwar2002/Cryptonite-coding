@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -23,7 +21,12 @@ ChartJS.register(
     Legend
 );
 
-const LineChart = ({ data, coinNames }) => {
+interface LineChartProps {
+    data: number[][][];
+    coinNames: string[];
+}
+
+const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
     const labels = data[0].map((entry) => {
         if (!Array.isArray(entry) || entry.length < 2) {
             console.error("Invalid entry format: each entry should be an array with at least two elements.");
@@ -34,10 +37,6 @@ const LineChart = ({ data, coinNames }) => {
             year: 'numeric', // numeric, 2-digit
             month: 'numeric', // numeric, 2-digit, long, short, narrow
             day: 'numeric', // numeric, 2-digit
-            // hour: '2-digit', // numeric, 2-digit
-            // minute: '2-digit', // numeric, 2-digit
-            // second: '2-digit', // numeric, 2-digit
-            // hour12: true, // true, false
         });
     });
 

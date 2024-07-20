@@ -15,7 +15,6 @@ function Navbar() {
                 <SearchBar />
             </div>
             <div className="flex items-center">
-                {/* <WatchList /> */}
                 <ThemeSwitch />
             </div>
         </nav>
