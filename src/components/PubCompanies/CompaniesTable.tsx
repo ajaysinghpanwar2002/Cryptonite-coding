@@ -1,6 +1,3 @@
-import React from 'react';
-import { useTheme } from 'next-themes';
-
 const TableHeader: React.FC<{ theme: string }> = ({ theme }) => (
     <thead>
         <tr>
@@ -44,8 +41,7 @@ const TableFooter: React.FC<{ data: any }> = ({ data }) => (
     </div>
 );
 
-const CompaniesTable: React.FC<{ data: any }> = ({ data }) => {
-    const { theme } = useTheme();
+const CompaniesTable: React.FC<{ data: any, theme: any }> = ({ data, theme }) => {
 
     return (
         <div className="overflow-x-auto mt-4">

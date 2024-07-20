@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
-import CompaniesTable from "./CompaniesTable";
+import CompaniesTable from "./CompaniesTable"; 
+import { useTheme } from 'next-themes';
 
 const ShimmerTable: React.FC = () => (
     <div className="animate-pulse space-y-4">
@@ -39,6 +40,7 @@ function PubCompanies() {
     const [selectedCoin, setSelectedCoin] = useState('bitcoin');
     const [coinData, setCoinData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { theme } = useTheme();
 
     const coins = ['bitcoin', 'ethereum'];
 
@@ -62,7 +64,7 @@ function PubCompanies() {
         <div>
             <h1 className="text-3xl font-medium mb-4 mt-8">Public Companies with {selectedCoin}</h1>
             <CoinSelector coins={coins} selectedCoin={selectedCoin} onChange={setSelectedCoin} />
-            {isLoading ? <ShimmerTable /> : <CompaniesTable data={coinData} />}
+            {isLoading ? <ShimmerTable /> : <CompaniesTable data={coinData} theme={theme}/>}
         </div>
     );
 }

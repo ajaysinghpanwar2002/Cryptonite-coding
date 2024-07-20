@@ -13,13 +13,11 @@ function HomePage() {
     const data = useCoinData(coinNames, currency);
     const { theme } = useTheme();
 
-    if (data.length === 0) return <LineChartShimmer theme={theme} />
-
     return (
         <div>
             <h1 className="text-3xl font-medium mb-8">Global Market Cap</h1>
             <div>
-                <LineChart data={data.map(d => d.market_caps)} coinNames={coinNames} />
+                {data.length == 0 ? <LineChartShimmer theme={theme} /> : <LineChart data={data.map(d => d.market_caps)} coinNames={coinNames} />}
             </div>
         </div>
     );
