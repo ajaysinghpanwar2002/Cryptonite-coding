@@ -46,8 +46,8 @@ const SearchBar = () => {
     };
 
     const chooseSuggestion = (suggestion: Cryptocurrency) => {
-        setSearchTerm(suggestion.name);
         dispatch(addCoin(suggestion.id)); // add the selected suggestion coin id to the slice of recent
+        setSearchTerm(suggestion.name);
         setSuggestions([]);
         router.push(`/explore/${suggestion.id}`)
         setSearchTerm("")

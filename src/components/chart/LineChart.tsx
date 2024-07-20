@@ -34,10 +34,10 @@ const LineChart = ({ data, coinNames }) => {
             year: 'numeric', // numeric, 2-digit
             month: 'numeric', // numeric, 2-digit, long, short, narrow
             day: 'numeric', // numeric, 2-digit
-            hour: '2-digit', // numeric, 2-digit
-            minute: '2-digit', // numeric, 2-digit
-            second: '2-digit', // numeric, 2-digit
-            hour12: true // true, false
+            // hour: '2-digit', // numeric, 2-digit
+            // minute: '2-digit', // numeric, 2-digit
+            // second: '2-digit', // numeric, 2-digit
+            // hour12: true, // true, false
         });
     });
 
