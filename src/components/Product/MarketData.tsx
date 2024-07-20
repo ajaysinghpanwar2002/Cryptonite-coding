@@ -54,24 +54,6 @@ function MarketData({ data }) {
                     <span className="font-semibold">High 24h:</span>
                     <span className="ml-2">{high_24h?.inr}</span>
                 </div>
-                {/* <div className="flex items-center  p-3 rounded-lg">
-                    {atl_change_percentage?.inr > 0 ? (
-                        <IoMdTrendingUp className="text-green-500 mr-2" />
-                    ) : (
-                        <IoMdTrendingDown className="text-red-500 mr-2" />
-                    )}
-                    <span className="font-semibold">ATL %:</span>
-                    <span className="ml-2">{atl_change_percentage?.inr}%</span>
-                </div>
-                <div className="flex items-center  p-3 rounded-lg">
-                    {ath_change_percentage?.inr > 0 ? (
-                        <IoMdTrendingUp className="text-green-500 mr-2" />
-                    ) : (
-                        <IoMdTrendingDown className="text-red-500 mr-2" />
-                    )}
-                    <span className="font-semibold">ATH %:</span>
-                    <span className="ml-2">{ath_change_percentage?.inr}%</span>
-                </div> */}
             </div>
         </div>
     );

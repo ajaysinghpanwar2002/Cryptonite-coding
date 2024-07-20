@@ -5,6 +5,7 @@ import LineChart from "../chart/LineChart";
 import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks/hooks';
 import { setData, setLastFetchTime } from '../../lib/store/features/coinMarketData/coinMarketDataSlice';
+import { useTheme } from 'next-themes';
 
 export interface CoinMarketData {
     prices: number[][];
@@ -22,6 +23,7 @@ function HomePage() {
     const previousYearUnixTimestamp = currentUnixTimestamp - oneYearInSeconds;
     const currency = 'inr';
     const coinNames = ['bitcoin', 'ethereum', 'dogecoin'];
+    const { theme } = useTheme();
 
     const dispatch = useAppDispatch();
     const { data, lastFetchTime } = useAppSelector(state => state.coinMarketData);
@@ -58,12 +60,19 @@ function HomePage() {
         return () => clearInterval(intervalId); // Cleanup interval on component unmount
     }, [lastFetchTime, data.length, fetchData]);
 
-    if (data.length === 0) return <div>Loading...</div>;
+    const ShimmerEffect = () => (
+        <div className={`w-full h-96 overflow-hidden relative rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-400'}`}>
+            <div className="shimmer h-full"></div>
+        </div>
+    );
+
+    if (data.length === 0) return <ShimmerEffect />
+
     console.log('data from redux :', data);
 
     return (
         <div>
-            <h1>Line Chart Example</h1>
+            <h1 className="text-3xl font-medium mb-8">Global Market Cap</h1>
             <div>
                 <LineChart data={data.map(d => d.market_caps)} coinNames={coinNames} />
             </div>

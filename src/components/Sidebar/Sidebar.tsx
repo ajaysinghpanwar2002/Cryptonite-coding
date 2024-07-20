@@ -3,9 +3,15 @@ import WatchList from "./WatchList"
 
 function Sidebar() {
     return (
-        <div className="flex flex-col ">
-            <div>
+        <div className="flex flex-col p-8">
+            <div className="">
+                <div className="text-2xl font-medium mb-4">
+                    Watchlist
+                </div>
                 <WatchList />
+            </div>
+            <div className="text-2xl font-medium mb-4 mt-20">
+                Recently Viewed
             </div>
             <div className="">
                 <RecentlyViewed />

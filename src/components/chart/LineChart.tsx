@@ -29,7 +29,16 @@ const LineChart = ({ data, coinNames }) => {
             console.error("Invalid entry format: each entry should be an array with at least two elements.");
             return "Invalid date";
         }
-        return new Date(entry[0] * 1000).toLocaleDateString();
+        // Convert timestamp to date and time
+        return new Date(entry[0] * 1000).toLocaleString('en-US', {
+            year: 'numeric', // numeric, 2-digit
+            month: 'numeric', // numeric, 2-digit, long, short, narrow
+            day: 'numeric', // numeric, 2-digit
+            hour: '2-digit', // numeric, 2-digit
+            minute: '2-digit', // numeric, 2-digit
+            second: '2-digit', // numeric, 2-digit
+            hour12: true // true, false
+        });
     });
 
     const datasets = data.map((coinData, index) => ({

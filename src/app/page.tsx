@@ -4,7 +4,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div>
+    <div className='p-8'>
       <HomePage />
       <PubCompanies />
     </div>

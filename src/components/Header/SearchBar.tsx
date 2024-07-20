@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import cryptocurrencies from "../../data.json"
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes';
+import { useAppDispatch } from "@/lib/store/hooks/hooks";
+import { addCoin } from "@/lib/store/features/recentlyViewed/recentlyViewed";
 
 interface Cryptocurrency {
     id: string;
@@ -16,7 +18,8 @@ const SearchBar = () => {
     const [suggestions, setSuggestions] = useState<Cryptocurrency[]>([]);
     const [debounceTimer, setDebounceTimer] = useState(null);
     const router = useRouter()
-
+    const { theme } = useTheme();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (debounceTimer) clearTimeout(debounceTimer);
@@ -44,6 +47,7 @@ const SearchBar = () => {
 
     const chooseSuggestion = (suggestion: Cryptocurrency) => {
         setSearchTerm(suggestion.name);
+        dispatch(addCoin(suggestion.id)); // add the selected suggestion coin id to the slice of recent
         setSuggestions([]);
         router.push(`/explore/${suggestion.id}`)
         setSearchTerm("")
@@ -54,13 +58,13 @@ const SearchBar = () => {
             <input
                 type="text"
                 placeholder="Search Cryptocurrencies"
-                className="p-2 rounded text-gray-500 w-96"
+                className={`p-2 rounded w-96  ${theme === 'dark' ? 'text-white' : 'text-black'}`}
                 value={searchTerm}
                 onChange={updateSearchTerm}
             />
-            <ul className="suggestions-list absolute z-10 max-h-60 w-full overflow-auto bg-white rounded shadow-lg mt-1">
+            <ul className={`suggestions-list absolute z-10 max-h-60 w-full overflow-auto  ${theme === 'dark' ? '' : 'text-black bg-white'} rounded shadow-lg mt-1`}>
                 {suggestions.map((suggestion, index) => (
-                    <li key={index} onClick={() => chooseSuggestion(suggestion)} className="p-2 hover:bg-gray-100 cursor-pointer text-gray-800 flex justify-start">
+                    <li key={index} onClick={() => chooseSuggestion(suggestion)} className={`p-2 ${theme === 'dark' ? 'bg-slate-800 hover:bg-slate-900' : 'hover:bg-slate-50 text-black bg-white'} cursor-pointer flex justify-start`}>
                         {suggestion.name}
                     </li>
                 ))}

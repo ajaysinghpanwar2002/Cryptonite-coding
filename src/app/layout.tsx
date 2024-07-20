@@ -25,10 +25,10 @@ export default function RootLayout({
           <StoreProvider>
             <Navbar />
             <div className="flex">
-              <div className="w-8/12">
+              <div className="w-7/12">
                 {children}
               </div>
-              <div className="w-4/12">
+              <div className="w-5/12">
                 <Sidebar/>
               </div>
             </div>
