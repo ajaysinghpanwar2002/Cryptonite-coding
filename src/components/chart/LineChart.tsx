@@ -27,7 +27,7 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
-    const labels = data[0].map((entry) => {
+    const labels = data[0]?.map((entry) => {
         if (!Array.isArray(entry) || entry.length < 2) {
             console.error("Invalid entry format: each entry should be an array with at least two elements.");
             return "Invalid date";

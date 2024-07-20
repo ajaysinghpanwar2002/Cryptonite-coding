@@ -1,53 +1,68 @@
-// store.ts
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import {
-    persistStore, persistReducer, FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
-} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import coinMarketDataReducer from './features/coinMarketData/coinMarketDataSlice'
-import { PersistGate } from 'redux-persist/integration/react'
-import watchList from './features/watchList/watchList';
-import recentlyViewed from './features/recentlyViewed/recentlyViewed';
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
+import { persistReducer } from "redux-persist";
 
+// reducers 
+import { coinMarketDataReducer } from "./features/coinMarketData/coinMarketDataSlice";
+import { recentlyViewedReducer } from "./features/recentlyViewed/recentlyViewed";
+import { watchListReducer } from "./features/watchList/watchList";
 
-const persistConfig = {
-    key: 'root',
-    version: 1,
-    storage,
+const createNoopStorage = () => {
+    return {
+        getItem() {
+            return Promise.resolve(null);
+        },
+        setItem(_key: string, value: number) {
+            return Promise.resolve(value);
+        },
+        removeItem() {
+            return Promise.resolve();
+        },
+    };
 };
+
+const storage =
+    typeof window !== "undefined"
+        ? createWebStorage("local")
+        : createNoopStorage();
+
+const coinMarketDataPersistConfig = {
+    key: "coinMarketData",
+    storage: storage,
+    whitelist: ["data", "lastFetchTime"],
+};
+
+const recentlyViewedPersistConfig = {
+    key: "recentlyViewed",
+    storage: storage,
+    whitelist: ["data"],
+};
+
+const watchListPersistConfig = {
+    key: "watchList",
+    storage: storage,
+    whitelist: ["data"],
+};
+
+const persistedcoinMarketDataReducer = persistReducer(coinMarketDataPersistConfig, coinMarketDataReducer);
+const persistedRecentlyViewedReducer = persistReducer(recentlyViewedPersistConfig, recentlyViewedReducer);
+const persistedWatchListReducer = persistReducer(watchListPersistConfig, watchListReducer);
 
 const rootReducer = combineReducers({
-    coinMarketData: coinMarketDataReducer,
-    watchList: watchList,
-    recentlyViewed: recentlyViewed,
+    coinMarketData: persistedcoinMarketDataReducer,
+    recentlyViewed: persistedRecentlyViewedReducer,
+    watchList: persistedWatchListReducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-export const makeStore = () => {
-    return configureStore({
-        reducer: persistedReducer,
-    });
-};
-
-const store = configureStore({
-    reducer: persistedReducer,
+export const store = configureStore({
+    reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            },
-        }),
-})
+        getDefaultMiddleware({ serializableCheck: false }),
+});
 
-export const persistor = persistStore(store);
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
-// Infer the type of makeStore
-export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore['getState']>;
-export type AppDispatch = AppStore['dispatch'];
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

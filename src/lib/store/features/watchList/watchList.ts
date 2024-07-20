@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface WatchListState {
+export interface WatchListState {
     data: string[];
 }
 
@@ -22,4 +22,4 @@ export const watchListSlice = createSlice({
 });
 
 export const { addCoin, removeCoin } = watchListSlice.actions;
-export default watchListSlice.reducer;
+export const watchListReducer = watchListSlice.reducer;

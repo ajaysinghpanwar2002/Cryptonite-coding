@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
 
-
 function ExploreTable({ data }) {
     const router = useRouter();
 

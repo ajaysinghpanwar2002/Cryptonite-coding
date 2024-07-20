@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface RecentlyViewedState {
+export interface RecentlyViewedState {
     data: string[];
 }
 
@@ -22,4 +22,4 @@ export const recentlyViewedSlice = createSlice({
 });
 
 export const { addCoin, removeCoin } = recentlyViewedSlice.actions;
-export default recentlyViewedSlice.reducer;
+export const recentlyViewedReducer = recentlyViewedSlice.reducer;

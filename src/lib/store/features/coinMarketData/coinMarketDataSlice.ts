@@ -1,8 +1,7 @@
-import { CoinMarketData } from '@/components/Home/HomePage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface CoinMarketDataState {
-    data: CoinMarketData[];
+export interface CoinMarketDataState {
+    data:[];
     lastFetchTime: number;
 }
 
@@ -15,7 +14,7 @@ export const coinMarketDataSlice = createSlice({
     name: 'coinMarketData',
     initialState,
     reducers: {
-        setData: (state, action: PayloadAction<CoinMarketData[]>) => {
+        setData: (state, action: PayloadAction<[]>) => {
             state.data = action.payload;
         },
         setLastFetchTime: (state, action: PayloadAction<number>) => {
@@ -26,4 +25,4 @@ export const coinMarketDataSlice = createSlice({
 
 export const { setData, setLastFetchTime } = coinMarketDataSlice.actions;
 
-export default coinMarketDataSlice.reducer;
+export const coinMarketDataReducer = coinMarketDataSlice.reducer;
