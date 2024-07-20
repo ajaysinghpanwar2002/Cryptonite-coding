@@ -17,9 +17,9 @@ function RecentlyViewed() {
                 let url = baseUrl + idsParam;
 
                 try {
-                    let res = []
-                    // let res = await fetchCoinGeckoData(url);
-                    // setFetchedData(res); 
+                    // let res = []
+                    let res = await fetchCoinGeckoData(url);
+                    setFetchedData(res); 
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }

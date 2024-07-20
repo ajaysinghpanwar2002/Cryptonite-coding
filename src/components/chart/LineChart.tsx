@@ -57,7 +57,7 @@ const LineChart = ({ data, coinNames }) => {
                 position: 'top',
             },
             title: {
-                display: true,
+                display: false,
                 text: 'Market Cap Prices',
             },
         },

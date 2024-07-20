@@ -1,13 +1,22 @@
 'use client'
 
 import { useState, useEffect } from "react";
+import cryptocurrencies from "../../data.json"
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+interface Cryptocurrency {
+    id: string;
+    name: string;
+    symbol: string;
+}
 
 const SearchBar = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestions, setSuggestions] = useState<Cryptocurrency[]>([]);
     const [debounceTimer, setDebounceTimer] = useState(null);
+    const router = useRouter()
 
-    const cryptocurrencies = ["Bitcoin", "Ethereum", "Ripple", "Litecoin"];
 
     useEffect(() => {
         if (debounceTimer) clearTimeout(debounceTimer);
@@ -15,13 +24,13 @@ const SearchBar = () => {
         const timer = setTimeout(() => {
             if (searchTerm.length > 0) {
                 const filteredSuggestions = cryptocurrencies.filter(crypto =>
-                    crypto.toLowerCase().includes(searchTerm.toLowerCase())
+                    crypto.name.toLowerCase().includes(searchTerm.toLowerCase())
                 );
                 setSuggestions(filteredSuggestions);
             } else {
                 setSuggestions([]);
             }
-        }, 300); // 300ms debounce time
+        }, 500); // 300ms debounce time
 
         setDebounceTimer(timer);
 
@@ -29,13 +38,15 @@ const SearchBar = () => {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    const updateSearchTerm = (e) => {
+    const updateSearchTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     };
 
-    const chooseSuggestion = (suggestion) => {
-        setSearchTerm(suggestion);
+    const chooseSuggestion = (suggestion: Cryptocurrency) => {
+        setSearchTerm(suggestion.name);
         setSuggestions([]);
+        router.push(`/explore/${suggestion.id}`)
+        setSearchTerm("")
     };
 
     return (
@@ -50,7 +61,7 @@ const SearchBar = () => {
             <ul className="suggestions-list absolute z-10 max-h-60 w-full overflow-auto bg-white rounded shadow-lg mt-1">
                 {suggestions.map((suggestion, index) => (
                     <li key={index} onClick={() => chooseSuggestion(suggestion)} className="p-2 hover:bg-gray-100 cursor-pointer text-gray-800 flex justify-start">
-                        {suggestion}
+                        {suggestion.name}
                     </li>
                 ))}
             </ul>

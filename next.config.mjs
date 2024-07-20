@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-// module.exports = {
-//     reactStrictMode: true,
-//     transpilePackages: ['@mui/x-charts'],
-//   };
+const nextConfig = {
+    images:{
+        domains: ['coin-images.coingecko.com']
+    }
+};
 
 export default nextConfig;

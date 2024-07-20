@@ -17,8 +17,8 @@ function WatchList() {
                 let url = baseUrl + idsParam;
 
                 try {
-                    let res = []
-                    // let res = await fetchCoinGeckoData(url);
+                    // let res = []
+                    let res = await fetchCoinGeckoData(url);
                     setFetchedData(res); 
                 } catch (error) {
                     console.error("Error fetching data:", error);
