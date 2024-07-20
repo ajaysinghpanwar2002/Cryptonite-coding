@@ -31,20 +31,21 @@ function HomePage() {
             const tempData: CoinMarketData[] = [];
             for (const coin of coinNames) {
                 const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart/range?vs_currency=${currency}&from=${previousYearUnixTimestamp}&to=${currentUnixTimestamp}`;
-                const coinData = []
-                // const coinData = await fetchCoinGeckoData(url);
+                // const coinData = []
+                const coinData = await fetchCoinGeckoData(url);
                 if (coinData && coinData['market_caps']) {
                     tempData.push(coinData);
                 } else {
                     throw new Error(`Failed to fetch data for ${coin}`);
                 }
             }
+            console.log('data for chart:', tempData);
             dispatch(setData(tempData));
             dispatch(setLastFetchTime(Date.now()));
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
-    }, [coinNames, currency, currentUnixTimestamp, previousYearUnixTimestamp, dispatch]);
+    }, [coinNames, dispatch]);
 
     useEffect(() => {
         const now = Date.now();
@@ -58,12 +59,13 @@ function HomePage() {
     }, [lastFetchTime, data.length, fetchData]);
 
     if (data.length === 0) return <div>Loading...</div>;
+    console.log('data from redux :', data);
 
     return (
         <div>
             <h1>Line Chart Example</h1>
             <div>
-                <LineChart data={data.map(d => d.prices)} coinNames={coinNames} />
+                <LineChart data={data.map(d => d.market_caps)} coinNames={coinNames} />
             </div>
         </div>
     );
