@@ -15,7 +15,7 @@ export const useCoinData = (coinNames: string[], currency: string) => {
         const previousYearUnixTimestamp = currentUnixTimestamp - ONE_YEAR_IN_SECONDS;
 
         try {
-            const tempData:any = [];
+            const tempData: any = [];
             for (const coin of coinNames) {
                 const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart/range?vs_currency=${currency}&from=${previousYearUnixTimestamp}&to=${currentUnixTimestamp}`;
                 const coinData = await fetchCoinGeckoData(url);
@@ -38,7 +38,13 @@ export const useCoinData = (coinNames: string[], currency: string) => {
             fetchData();
         }
 
-        const intervalId = setInterval(fetchData, FETCH_INTERVAL_MS);
+        const intervalId = setInterval(() => {
+            const now = Date.now();
+            if (now - lastFetchTime > FETCH_INTERVAL_MS) {
+                fetchData();
+            }
+        }, FETCH_INTERVAL_MS);
+
         return () => clearInterval(intervalId);
     }, [lastFetchTime, data.length, fetchData]);
 
