@@ -46,10 +46,10 @@ const CoinStats: React.FC<{ market_cap_rank: number, watchlist_portfolio_users: 
     sentiment_votes_down_percentage
 }) => (
     <div className="grid grid-cols-2 gap-4 mb-4">
-        <p className="flex items-center"><FaChartLine className="mr-2" /> {market_cap_rank}</p>
-        <p className="flex items-center"><FaUsers className="mr-2" /> {watchlist_portfolio_users}</p>
-        <p className="flex items-center"><FaThumbsUp className="mr-2" /> {sentiment_votes_up_percentage}%</p>
-        <p className="flex items-center"><FaThumbsDown className="mr-2" /> {sentiment_votes_down_percentage}%</p>
+        <p className="flex items-center"><FaChartLine className="mr-2" /> {market_cap_rank || 'nil'}</p>
+        <p className="flex items-center"><FaUsers className="mr-2" /> {watchlist_portfolio_users || 'nil'}</p>
+        <p className="flex items-center"><FaThumbsUp className="mr-2" /> {sentiment_votes_up_percentage ? `${sentiment_votes_up_percentage}%` : 'nil'}</p>
+        <p className="flex items-center"><FaThumbsDown className="mr-2" /> {sentiment_votes_down_percentage ? `${sentiment_votes_down_percentage}%` : 'nil'}</p>
     </div>
 );
 

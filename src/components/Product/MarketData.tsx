@@ -30,37 +30,37 @@ function MarketData({ data }:{data: any}) {
 
     return (
         <div className="p-4 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Market Data</            h2>
+            <h2 className="text-xl font-bold mb-4">Market Data</h2>
             <MarketDataGrid>
                 <MarketDataItem
                     icon={<FaDollarSign className="text-green-500 mr-2" />}
                     label="Current Price"
-                    value={current_price?.inr}
+                    value={current_price?.inr || 'nil'}
                 />
                 <MarketDataItem
                     icon={<FaChartLine className="text-blue-500 mr-2" />}
                     label="All Time High"
-                    value={ath?.inr}
+                    value={ath?.inr || 'nil'}
                 />
                 <MarketDataItem
                     icon={<FaArrowDown className="text-red-500 mr-2" />}
                     label="All Time Low"
-                    value={atl?.inr}
+                    value={atl?.inr || 'nil'}
                 />
                 <MarketDataItem
                     icon={<FaArrowDown className="text-red-500 mr-2" />}
                     label="Low 24h"
-                    value={low_24h?.inr}
+                    value={low_24h?.inr || 'nil'}
                 />
                 <MarketDataItem
                     icon={getPriceChangeIcon(price_change_percentage_24h_in_currency?.inr)}
                     label="Price 24h"
-                    value={`${price_change_percentage_24h_in_currency?.inr}%`}
+                    value={`${price_change_percentage_24h_in_currency?.inr || 'nil'}%`}
                 />
                 <MarketDataItem
                     icon={<FaChartLine className="text-purple-500 mr-2" />}
                     label="High 24h"
-                    value={high_24h?.inr}
+                    value={high_24h?.inr || 'nil'}
                 />
             </MarketDataGrid>
         </div>

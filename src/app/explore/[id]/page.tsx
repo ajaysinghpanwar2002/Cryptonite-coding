@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchCoinGeckoData } from '@/components/utils/fetchCoinGeckoData';
 import LineChart from '@/components/chart/LineChart';
 import GeneralInformation from '@/components/Product/GeneralInformation';
@@ -32,8 +32,7 @@ const ShimmerEffect = () => {
 };
 
 // DataTypeButtons Component
-const DataTypeButtons = ({ dataType, setDataType }: { dataType: string; setDataType: (type: string) => void }) => {
-    const { theme } = useTheme();
+const DataTypeButtons = ({ dataType, setDataType }: { dataType: any; setDataType: any }) => {    const { theme } = useTheme();
     return (
         <div className='flex justify-around w-3/6'>
             {['prices', 'market_caps', 'total_volumes'].map((type, index) => (
@@ -102,57 +101,95 @@ const ShimmerProductDetails = () => {
     );
 };
 
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+// Queue management
+let requestQueue: (() => void)[] = [];
+let isRequestInProgress = false;
+
+const processQueue = async () => {
+    if (isRequestInProgress || requestQueue.length === 0) {
+        return;
+    }
+
+    isRequestInProgress = true;
+    const request = requestQueue.shift();
+    if (request) {
+        await request();
+        await delay(1000);  // Delay of 1000 milliseconds (1 second) between requests
+    }
+    isRequestInProgress = false;
+    processQueue();
+};
+
+const queueRequest = (request: () => Promise<any>) => {
+    requestQueue.push(() => request().then(processQueue));
+    processQueue();
+};
+
+const fetchCoinGeckoDataWithDelay = (url: string) => {
+    return new Promise<any>((resolve, reject) => {
+        const request = async () => {
+            try {
+                const data = await fetchCoinGeckoData(url);
+                resolve(data);
+            } catch (error) {
+                reject(error);
+            }
+        };
+        queueRequest(request);
+    });
+};
+
 // Main Page Component
 function Page({ params }:{params: any}) {
-    const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData | null>(null);
+    const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
     const [productDetails, setProductDetails] = useState<any>({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [marketCapLoading, setMarketCapLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [marketCapLoading, setMarketCapLoading] = useState(false);
     const currency = 'inr';
-    const currentUnixTimestamp = useMemo(() => Math.floor(Date.now() / 1000), []);
+    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
     const coinName = params.id;
-    const timeRangesInSeconds = useMemo(() => [86400, 604800, 2592000, 31536000, 94608000, 157680000], []);
-    const timeLabels = useMemo(() => ['1d', '1w', '1m', '1y', '3y', '5y'], []);
+    const timeRangesInSeconds = [86400, 604800, 2592000, 31536000, 94608000, 157680000]; // 1 day, 1 week, 1 month, 1 year, 3 years, 5 years in seconds
+    const timeLabels = ['1d', '1w', '1m', '1y', '3y', '5y'];
     const [timeRange, setTimeRange] = useState(0);
-    const calculateTimeRange = useMemo(() => currentUnixTimestamp - timeRangesInSeconds[timeRange], [currentUnixTimestamp, timeRangesInSeconds, timeRange]);
+    let calculateTimeRange = currentUnixTimestamp - timeRangesInSeconds[timeRange];
     const [dataType, setDataType] = useState<'prices' | 'market_caps' | 'total_volumes'>('market_caps');
     const dispatch = useAppDispatch();
     
-    const fetchMarketCapData = useCallback(async () => {
-        setMarketCapLoading(true);
-        try {
-            const data = await fetchCoinGeckoData(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
-            setMarketCapProduct(data);
-        } catch (error) {
-            console.error('Failed to fetch market cap data:', error);
-        } finally {
-            setMarketCapLoading(false);
-        }
-    }, [coinName, currency, calculateTimeRange, currentUnixTimestamp]);
-
-    const fetchProductDetails = useCallback(async () => {
-        setIsLoading(true);
-        dispatch(addCoin(coinName));
-        try {
-            const data = await fetchCoinGeckoData(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
-            setProductDetails(data);
-        } catch (error) {
-            console.error('Failed to fetch product details:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [coinName, dispatch]);
-
     useEffect(() => {
-        fetchMarketCapData();
-    }, [fetchMarketCapData]);
-
+        const fetchData = async () => {
+            setMarketCapLoading(true);
+            try {
+                const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
+                setMarketCapProduct([data]);
+            } catch (error) {
+                console.error('Failed to fetch market cap data:', error);
+            } finally {
+                setMarketCapLoading(false);
+            }
+        };
+        fetchData();
+    }, [coinName, timeRange]);
+    
     useEffect(() => {
+        const fetchProductDetails = async () => {
+            setIsLoading(true);
+            dispatch(addCoin(params.id));
+            try {
+                const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
+                setProductDetails(data);
+            } catch (error) {
+                console.error('Failed to fetch product details:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
         fetchProductDetails();
-    }, [fetchProductDetails]);
+    }, [coinName]);
 
     if (isLoading) return <ShimmerProductDetails />;
-    if (marketCapLoading) return <ShimmerEffect />;
+    // if (marketCapLoading) return <ShimmerEffect />;
 
     return (
         <div className='p-4'>
@@ -163,8 +200,8 @@ function Page({ params }:{params: any}) {
                 <DataTypeButtons dataType={dataType} setDataType={setDataType} />
             </div>
             <div className='mt-5 p-4'>
-                {marketCapProduct && (
-                    <LineChart data={marketCapProduct[dataType]} coinNames={[coinName]} />
+                {marketCapProduct.length > 0 && (
+                    <LineChart data={marketCapProduct.map(d => d[dataType])} coinNames={[coinName]} />
                 )}
             </div>
             <div className='flex items-center justify-center mt-4'>

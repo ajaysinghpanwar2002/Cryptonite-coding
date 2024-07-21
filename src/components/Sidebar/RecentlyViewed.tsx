@@ -69,7 +69,7 @@ function RecentlyViewed() {
 
     return (
         <div>
-            {data.length === 0 ? (
+            {data.length === 0 || fetchedData.length == 0? (
                 <div className="flex flex-col items-center justify-center p-4 text-center text-gray-600 rounded-lg">
                     <FaCompass  className="w-6 h-6 mb-2 text-gray-500" />
                     <p>Explore Coins, Your history appears here</p>
