@@ -6,6 +6,7 @@ import CryptoTable from "./CryptoTable";
 import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { FaCompass } from "react-icons/fa";
+import Link from "next/link";
 
 function useFetchData(data:any) {
     const [fetchedData, setFetchedData] = useState([]);
@@ -72,8 +73,7 @@ function RecentlyViewed() {
                 <div className="flex flex-col items-center justify-center p-4 text-center text-gray-600 rounded-lg">
                     <FaCompass  className="w-6 h-6 mb-2 text-gray-500" />
                     <p>Explore Coins, Your history appears here</p>
-                    <p className="text-sm">Drag and drop the coin toward the watchlist to add</p>
-                </div>
+                    <p className="text-sm">You can explore Coins on <Link href="/explore" className="text-blue-500 hover:text-blue-600">Explore Page</Link></p>                </div>
             ) : <CryptoTable data={fetchedData} canBeEdited={false} />}
         </div>
     );
