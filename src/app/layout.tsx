@@ -29,11 +29,11 @@ export default function RootLayout({
         <ThemeProviderWrapper>
           <ReduxProvider>
             <Navbar />
-            <div className="flex">
-              <div className="w-7/12">
+            <div className="flex flex-col md:flex-row">
+              <div className="w-full md:w-7/12">
                 {children}
               </div>
-              <div className="w-5/12">
+              <div className="w-full md:w-5/12">
                 <Sidebar />
               </div>
             </div>

@@ -68,13 +68,13 @@ const SearchBar = () => {
             <input
                 type="text"
                 placeholder="Search Cryptocurrencies"
-                className={`p-2 rounded w-96 ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+                className={`p-2 rounded w-full sm:w-96 ${theme === 'dark' ? 'text-white' : 'text-black'} text-sm sm:text-base`}
                 value={searchTerm}
                 onChange={updateSearchTerm}
                 onKeyDown={handleKeyDown}
             />
             <ul
-                className={`suggestions-list absolute z-10 max-h-60 w-full overflow-auto ${theme === 'dark' ? '' : 'text-black bg-white'} rounded shadow-lg mt-1`}
+                className={`suggestions-list absolute z-10 max-h-60 w-full overflow-auto ${theme === 'dark' ? '' : 'text-black bg-white'} rounded shadow-lg mt-1 text-sm sm:text-base`}
                 role="listbox"
             >
                 {suggestions.map((suggestion, index) => (

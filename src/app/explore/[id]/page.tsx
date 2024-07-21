@@ -32,7 +32,8 @@ const ShimmerEffect = () => {
 };
 
 // DataTypeButtons Component
-const DataTypeButtons = ({ dataType, setDataType }: { dataType: any; setDataType: any }) => {    const { theme } = useTheme();
+const DataTypeButtons = ({ dataType, setDataType }: { dataType: any; setDataType: any }) => {
+    const { theme } = useTheme();
     return (
         <div className='flex justify-around w-3/6'>
             {['prices', 'market_caps', 'total_volumes'].map((type, index) => (
@@ -142,7 +143,7 @@ const fetchCoinGeckoDataWithDelay = (url: string) => {
 };
 
 // Main Page Component
-function Page({ params }:{params: any}) {
+function Page({ params }: { params: any }) {
     const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
     const [productDetails, setProductDetails] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);
@@ -156,7 +157,7 @@ function Page({ params }:{params: any}) {
     let calculateTimeRange = currentUnixTimestamp - timeRangesInSeconds[timeRange];
     const [dataType, setDataType] = useState<'prices' | 'market_caps' | 'total_volumes'>('market_caps');
     const dispatch = useAppDispatch();
-    
+
     useEffect(() => {
         const fetchData = async () => {
             setMarketCapLoading(true);
@@ -171,7 +172,7 @@ function Page({ params }:{params: any}) {
         };
         fetchData();
     }, [coinName, timeRange]);
-    
+
     useEffect(() => {
         const fetchProductDetails = async () => {
             setIsLoading(true);
