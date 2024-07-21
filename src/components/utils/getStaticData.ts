@@ -6,3 +6,9 @@ export const getStaticDataThreeCoins = () => {
     const jsonData = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(jsonData);
 }
+
+export const getStaticDataSuggestions = () => {
+    const filePath = path.join(process.cwd(), '/public/CoinNames.json');
+    const jsonData = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(jsonData);
+}

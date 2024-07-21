@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import cryptocurrencies from "../../data.json"
+// import cryptocurrencies from "../../data.json"
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes';
 
@@ -11,7 +11,7 @@ interface Cryptocurrency {
     symbol: string;
 }
 
-const DEBOUNCE_TIME = 500; // milliseconds
+const DEBOUNCE_TIME = 300; // milliseconds
 
 function useDebounce(value: string, delay: number) {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -24,7 +24,7 @@ function useDebounce(value: string, delay: number) {
     return debouncedValue;
 }
 
-const SearchBar = () => {
+const SearchBar = ({ cryptocurrencies }: { cryptocurrencies: any }) => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [suggestions, setSuggestions] = useState<Cryptocurrency[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(-1); // For keyboard navigation
@@ -34,7 +34,7 @@ const SearchBar = () => {
 
     useEffect(() => {
         if (debouncedSearchTerm) {
-            const filteredSuggestions = cryptocurrencies.filter(crypto =>
+            const filteredSuggestions = cryptocurrencies.filter((crypto: any) =>
                 crypto.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
             );
             setSuggestions(filteredSuggestions);
