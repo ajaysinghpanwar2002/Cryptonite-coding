@@ -39,7 +39,7 @@ function HomePage({ FirstReloadConstantDataForThreeCoins }: { FirstReloadConstan
         <div>
             <h1 className="text-3xl font-medium mb-8">Global Market Cap</h1>
             <div>
-                {(data.length === 0 ? <LineChartShimmer theme={theme || ''} /> : <LineChart data={data.map((d: { market_caps: any; }) => d.market_caps)} coinNames={coinIds} />) as any}
+                {(data.length === 0 ? <LineChartShimmer theme={theme || ''} /> : <LineChart data={data.map((d: { market_caps: any; }) => d.market_caps)} coinNames={coinIds} />)}
             </div>
         </div>
     );
