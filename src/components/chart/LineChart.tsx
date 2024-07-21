@@ -79,7 +79,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
             },
             tooltip: {
                 callbacks: {
-                    label: function (context) {
+                    label: function (context:any) {
                         let label = context.dataset.label || '';
                         if (label) {
                             label += ': ';
@@ -132,7 +132,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
                         family: 'Arial, sans-serif',
                     },
                     color: '#666',
-                    callback: function (value) {
+                    callback: function (value:any) {
                         return new Intl.NumberFormat('en-IN', {
                             maximumFractionDigits: 2,
                         }).format(value) + ' Cr'; // Format with commas and append 'Cr'
@@ -153,7 +153,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
 
     return (
         <div className="relative w-full h-96">
-            <Line data={chartData} options={options} />
+            <Line data={chartData} options={options as any} />
         </div>
     );
 };

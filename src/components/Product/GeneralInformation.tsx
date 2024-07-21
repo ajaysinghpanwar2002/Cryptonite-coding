@@ -26,13 +26,15 @@ interface GeneralInformationProps {
 
 const CoinHeader: React.FC<{ image?: string, name: string, symbol: string }> = ({ image, name, symbol }) => (
     <div className='flex items-center'>
-        <Image
-            src={image}
-            alt={name}
-            width={25}
-            height={25}
-            className="mb-4 h-10 w-10"
-        />
+        {image && (
+            <Image
+                src={image}
+                alt={name}
+                width={25}
+                height={25}
+                className="mb-4 h-10 w-10"
+            />
+        )}
         <h2 className="text-2xl font-bold mb-4 pl-2">{name} ({symbol})</h2>
     </div>
 );
@@ -62,12 +64,13 @@ const Description: React.FC<{ description?: string }> = ({ description }) => {
     };
 
     const descriptionHtml = isExpanded ? description : getShortDescription(description);
+    const safeDescriptionHtml = descriptionHtml || '';
 
     return (
         <div>
             <div
                 className="mb-4"
-                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                dangerouslySetInnerHTML={{ __html: safeDescriptionHtml }}
             ></div>
             <button
                 onClick={toggleExpand}

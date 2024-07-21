@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store/store';
 import ExploreTable from '@/components/Explore/ExploreTable';
 import { setCoinsA } from '@/lib/store/features/dragable/coinsTableA';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { FirstReloadConstantDataForExploreCoinsPage } from '@/constants';
+import  FirstReloadConstantDataForExploreCoinsPage  from '../../../public/FirstReloadConstantDataForExploreCoinsPage.json';
 
 // ExploreTableShimmer Component
 function ExploreTableShimmer() {

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import CryptoTable from "./CryptoTable";
 import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
 
-function useFetchData(data) {
+function useFetchData(data:any) {
     const [fetchedData, setFetchedData] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -13,7 +13,7 @@ function useFetchData(data) {
         async function fetchData() {
             if (data.length > 0) {
                 let baseUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=";
-                let idsParam = data.map((id) => id).join('%2C');
+                let idsParam = data.map((id: any) => id).join('%2C');
                 let url = baseUrl + idsParam;
 
                 try {

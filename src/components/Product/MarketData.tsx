@@ -15,7 +15,7 @@ const MarketDataGrid: React.FC<{ children: React.ReactNode }> = ({ children }) =
     </div>
 );
 
-function MarketData({ data }) {
+function MarketData({ data }:{data: any}) {
     const {
         current_price,
         ath,

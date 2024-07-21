@@ -1,9 +1,10 @@
 export async function fetchCoinGeckoData(url: string) {
-    const response = await fetch(`${url}`, {
+    const apiKey = process.env.API_KEY || ''; // intentionally did it
+    const response = await fetch(url, { 
         method: 'GET',
         headers: {
             accept: 'application/json',
-            "x-cg-demo-api-key": 'CG-LCeYynUJQjxDmuf3QM42BQmt'
+            "x-cg-demo-api-key": "CG-LCeYynUJQjxDmuf3QM42BQmt",
         }
     });
     if (!response.ok) {

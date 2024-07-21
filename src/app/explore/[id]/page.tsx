@@ -33,8 +33,7 @@ const ShimmerEffect = () => {
 };
 
 // DataTypeButtons Component
-const DataTypeButtons = ({ dataType, setDataType }) => {
-    const { theme } = useTheme();
+const DataTypeButtons = ({ dataType, setDataType }: { dataType: any; setDataType: any }) => {    const { theme } = useTheme();
     return (
         <div className='flex justify-around w-3/6'>
             {['prices', 'market_caps', 'total_volumes'].map((type, index) => (
@@ -104,7 +103,7 @@ const ShimmerProductDetails = () => {
 };
 
 // Main Page Component
-function Page({ params }) {
+function Page({ params }:{params: any}) {
     const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
     const [productDetails, setProductDetails] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);

@@ -70,7 +70,7 @@ const CompaniesTable: React.FC<{ data: any, theme: any }> = ({ data, theme }) =>
                 <table className="min-w-full">
                     <TableHeader theme={theme} />
                     <tbody>
-                        {data?.companies?.map((company, index) => (
+                        {data?.companies?.map((company:any, index:number) => (
                             <TableRow key={index} company={company} />
                         ))}
                     </tbody>

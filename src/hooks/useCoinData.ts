@@ -15,7 +15,7 @@ export const useCoinData = (coinNames: string[], currency: string) => {
         const previousYearUnixTimestamp = currentUnixTimestamp - ONE_YEAR_IN_SECONDS;
 
         try {
-            const tempData = [];
+            const tempData:any = [];
             for (const coin of coinNames) {
                 const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart/range?vs_currency=${currency}&from=${previousYearUnixTimestamp}&to=${currentUnixTimestamp}`;
                 const coinData = await fetchCoinGeckoData(url);

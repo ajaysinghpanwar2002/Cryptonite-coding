@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store/store';
 import { addCoinA, removeCoinA, setCoinsA } from '@/lib/store/features/dragable/coinsTableA';
 import { addCoinB, removeCoinB } from '@/lib/store/features/dragable/coinsTableB';
 
-const SortableCoinsList = ({ coin, router }) => {
+const SortableCoinsList = ({ coin, router }: { coin: any, router: any }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: coin.id });
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -30,14 +30,14 @@ const SortableCoinsList = ({ coin, router }) => {
     )
 }
 
-function ExploreTable({ data, pageNo }) {
+function ExploreTable({ data, pageNo }:{data:any, pageNo:number}) {
     const router = useRouter();
 
     const dispatch = useAppDispatch();
     const coinsTableA = useAppSelector((state) => state.coinsTableA.pages[pageNo] || []);
     const coinsTableB = useAppSelector((state) => state.coinsTableB.coins);
 
-    const onDragEnd = (event) => {
+    const onDragEnd = (event: any) => {
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
