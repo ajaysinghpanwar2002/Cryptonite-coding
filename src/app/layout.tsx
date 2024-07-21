@@ -34,7 +34,7 @@ export default function RootLayout({
                 {children}
               </div>
               <div className="w-5/12">
-                <Sidebar/>
+                <Sidebar />
               </div>
             </div>
           </ReduxProvider>
@@ -43,3 +43,14 @@ export default function RootLayout({
     </html>
   );
 }
+// {
+//   "id": "bitcoin",
+//   "symbol": "btc",
+//   "name": "Bitcoin",
+//   "image": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
+//   "current_price": 5623160,
+//   "market_cap": 110878089360086,
+//   "high_24h": 5667256,
+//   "low_24h": 5551225,
+//   "price_change_percentage_24h_in_currency": 0.7741219524109496,
+// }

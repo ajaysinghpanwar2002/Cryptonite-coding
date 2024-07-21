@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { formatINR } from "@/lib/utils";
+import Link from 'next/link'
 
 const TableHeader: React.FC = () => (
     <thead>
@@ -18,9 +19,9 @@ const TableRow: React.FC<{ coin: any }> = ({ coin }) => (
         <td className="py-2 px-4 border-b border-gray-200">
             <Image src={coin.image} alt={coin.name} className="w-5 h-5" width={16} height={16} />
         </td>
-        <td className="py-2 px-3 border-b border-gray-200 text-sm">{coin.name} ({coin.symbol?.toUpperCase()})</td>
-        <td className="py-2 px-3 border-b border-gray-200 text-sm">{coin.current_price?.toLocaleString()}</td>
-        <td className="py-2 px-3 border-b border-gray-200 text-sm">{coin.price_change_percentage_24h?.toFixed(2)}%</td>
+        <td className="py-2 px-3 border-b border-gray-200 text-sm"><Link href={`/explore/${coin.id}`}>{coin.name} ({coin.symbol?.toUpperCase()})</Link></td>
+        <td className="py-2 px-3 border-b border-gray-200 text-sm"><Link href={`/explore/${coin.id}`}>{coin.current_price?.toLocaleString()}</Link></td>
+        <td className="py-2 px-3 border-b border-gray-200 text-sm"><Link href={`/explore/${coin.id}`}> {coin.price_change_percentage_24h?.toFixed(2)}%</Link></td>
         <td className="py-2 px-3 border-b border-gray-200 text-sm">{formatINR(coin.market_cap)}</td>
     </tr>
 );

@@ -7,6 +7,8 @@ import { persistReducer } from "redux-persist";
 import { coinMarketDataReducer } from "./features/coinMarketData/coinMarketDataSlice";
 import { recentlyViewedReducer } from "./features/recentlyViewed/recentlyViewed";
 import { watchListReducer } from "./features/watchList/watchList";
+import { coinsTableAReducer } from "./features/dragable/coinsTableA";
+import { coinsTableBReducer } from "./features/dragable/coinsTableB";
 
 const createNoopStorage = () => {
     return {
@@ -45,14 +47,30 @@ const watchListPersistConfig = {
     whitelist: ["data"],
 };
 
+const coinTableAPersistConfig = {
+    key: "coinsTableA",
+    storage: storage,
+    whitelist: ["coins"],
+};
+
+const coinTableBPersistConfig = {
+    key: "coinsTableB",
+    storage: storage,
+    whitelist: ["coins"],
+};
+
 const persistedcoinMarketDataReducer = persistReducer(coinMarketDataPersistConfig, coinMarketDataReducer);
 const persistedRecentlyViewedReducer = persistReducer(recentlyViewedPersistConfig, recentlyViewedReducer);
 const persistedWatchListReducer = persistReducer(watchListPersistConfig, watchListReducer);
+const persistedCoinTableAReducer = persistReducer(coinTableAPersistConfig, coinsTableAReducer);
+const persistedCoinTableBReducer = persistReducer(coinTableBPersistConfig, coinsTableBReducer);
 
 const rootReducer = combineReducers({
     coinMarketData: persistedcoinMarketDataReducer,
     recentlyViewed: persistedRecentlyViewedReducer,
     watchList: persistedWatchListReducer,
+    coinsTableA: persistedCoinTableAReducer,
+    coinsTableB: persistedCoinTableBReducer,
 });
 
 export const store = configureStore({

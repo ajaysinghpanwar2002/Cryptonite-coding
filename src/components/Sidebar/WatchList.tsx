@@ -1,8 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
 import { useAppSelector } from "@/lib/store/hooks/hooks"
-import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData"
 import CryptoTable from "./CryptoTable"
 
 // Shimmer component for loading state
@@ -28,45 +26,13 @@ function WatchListShimmer() {
     )
 }
 
-// Component to fetch and manage data
-function FetchData({ data, setFetchedData }) {
-    useEffect(() => {
-        async function fetchData() {
-            if (data.length > 0) {
-                let baseUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=";
-                let idsParam = data.map((id) => id).join('%2C');
-                let url = baseUrl + idsParam;
-
-                try {
-                    let res = await fetchCoinGeckoData(url);
-                    setFetchedData(res);
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            }
-        }
-
-        fetchData();
-    }, [data, setFetchedData]);
-}
-
-// Main WatchList component
 function WatchList() {
-    const data = useAppSelector(state => state.watchList.data);
-    const [fetchedData, setFetchedData] = useState([]);
-
-    if (data.length === 0) {
-        return (
-            <div>
-                <p>Add coins to watchlist</p>
-            </div>
-        )
-    }
+    const coinsSet = useAppSelector((state) => state.coinsTableB.coins);
+    const data = Array.from(coinsSet);
 
     return (
         <div>
-            <FetchData data={data} setFetchedData={setFetchedData} />
-            {fetchedData.length === 0 ? <WatchListShimmer /> : <CryptoTable data={fetchedData} />}
+            {data.length === 0 ? <div>Add coins to watchlist</div> : <CryptoTable data={data} />}
         </div>
     )
 }
