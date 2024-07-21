@@ -4,6 +4,8 @@ import { useAppSelector } from "@/lib/store/hooks/hooks";
 import { useEffect, useState } from "react";
 import CryptoTable from "./CryptoTable";
 import { fetchCoinGeckoData } from "../utils/fetchCoinGeckoData";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { FaCompass } from "react-icons/fa";
 
 function useFetchData(data:any) {
     const [fetchedData, setFetchedData] = useState([]);
@@ -60,21 +62,19 @@ function RecentlyViewed() {
     const data = useAppSelector(state => state.recentlyViewed.data);
     const { fetchedData, loading } = useFetchData(data);
 
-    if (data.length === 0) {
-        return (
-            <div>
-                <p>Add coins to watchlist</p>
-            </div>
-        );
-    }
-
     if (loading) {
         return <RecentlyViewedShimmer />;
     }
 
     return (
         <div>
-            <CryptoTable data={fetchedData} canBeEdited={false} />
+            {data.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-4 text-center text-gray-600 rounded-lg">
+                    <FaCompass  className="w-6 h-6 mb-2 text-gray-500" />
+                    <p>Explore Coins, Your history appears here</p>
+                    <p className="text-sm">Drag and drop the coin toward the watchlist to add</p>
+                </div>
+            ) : <CryptoTable data={fetchedData} canBeEdited={false} />}
         </div>
     );
 }
