@@ -4,7 +4,7 @@ const TableHeader: React.FC<{ theme: string }> = ({ theme }) => (
             {['Name', 'Country', 'Total Holdings', 'Entry Value (USD)', 'Current Value (USD)', '% of Total Supply'].map((header) => (
                 <th
                     key={header}
-                    className={`py-2 px-4 border-b-2 border-gray-300 text-left text-sm leading-4 tracking-wider sticky top-0 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}
+                    className={`py-2 px-4 border-b-2 border-gray-300 text-left text-sm leading-4 tracking-wider sticky top-0 bg-gray-400`}
                 >
                     {header}
                 </th>
