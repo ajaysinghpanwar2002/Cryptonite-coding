@@ -74,7 +74,7 @@ function RecentlyViewed() {
 
     return (
         <div>
-            <CryptoTable data={fetchedData} />
+            <CryptoTable data={fetchedData} canBeEdited={false} />
         </div>
     );
 }

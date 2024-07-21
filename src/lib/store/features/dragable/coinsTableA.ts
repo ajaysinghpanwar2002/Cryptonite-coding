@@ -13,25 +13,25 @@ export interface Coin {
 }
 
 export interface CoinsTableAState {
-    coins: Coin[];
+    pages: { [pageNo: number]: Coin[] };
 }
 
 const initialState: CoinsTableAState = {
-    coins: [],
+    pages: {},
 };
 
 export const coinsTableASlice = createSlice({
     name: 'coinsTableA',
     initialState,
     reducers: {
-        setCoinsA: (state, action: PayloadAction<Coin[]>) => {
-            state.coins = action.payload;
+        setCoinsA: (state, action: PayloadAction<{ pageNo: number, coins: Coin[] }>) => {
+            state.pages[action.payload.pageNo] = action.payload.coins;
         },
-        removeCoinA: (state, action: PayloadAction<string>) => {
-            state.coins = state.coins.filter(coin => coin.id !== action.payload);
+        removeCoinA: (state, action: PayloadAction<{ pageNo: number, coinId: string }>) => {
+            state.pages[action.payload.pageNo] = state.pages[action.payload.pageNo].filter(coin => coin.id !== action.payload.coinId);
         },
-        addCoinA: (state, action: PayloadAction<Coin>) => {
-            state.coins.push(action.payload);
+        addCoinA: (state, action: PayloadAction<{ pageNo: number, coin: Coin }>) => {
+            state.pages[action.payload.pageNo].push(action.payload.coin);
         },
     },
 });

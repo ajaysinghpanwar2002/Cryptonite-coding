@@ -30,11 +30,11 @@ const SortableCoinsList = ({ coin, router }) => {
     )
 }
 
-function ExploreTable({ data }) {
+function ExploreTable({ data, pageNo }) {
     const router = useRouter();
 
     const dispatch = useAppDispatch();
-    const coinsTableA = useAppSelector((state) => state.coinsTableA.coins);
+    const coinsTableA = useAppSelector((state) => state.coinsTableA.pages[pageNo] || []);
     const coinsTableB = useAppSelector((state) => state.coinsTableB.coins);
 
     const onDragEnd = (event) => {
@@ -45,17 +45,19 @@ function ExploreTable({ data }) {
         if (!activeCoin) return;
 
         if (coinsTableA.some(coin => coin.id === active.id)) {
-            dispatch(removeCoinA(active.id));
+            dispatch(removeCoinA({ pageNo, coinId: active.id }));
             dispatch(addCoinB(activeCoin));
         } else {
             dispatch(removeCoinB(active.id));
-            dispatch(addCoinA(activeCoin));
+            dispatch(addCoinA({ pageNo, coin: activeCoin }));
         }
     }
 
     useEffect(() => {
-        dispatch(setCoinsA(data));
-    }, [data, dispatch])
+        if (data && data.length > 0) {
+            dispatch(setCoinsA({ pageNo, coins: data }));
+        }
+    }, [data, dispatch, pageNo])
 
     return (
         <div className="overflow-x-auto">

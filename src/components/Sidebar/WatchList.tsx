@@ -2,6 +2,7 @@
 
 import { useAppSelector } from "@/lib/store/hooks/hooks"
 import CryptoTable from "./CryptoTable"
+import { AiOutlinePlusCircle } from "react-icons/ai";
 
 // Shimmer component for loading state
 function WatchListShimmer() {
@@ -32,7 +33,13 @@ function WatchList() {
 
     return (
         <div>
-            {data.length === 0 ? <div>Add coins to watchlist</div> : <CryptoTable data={data} />}
+            {data.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-4 text-center text-gray-600 rounded-lg">
+                    <AiOutlinePlusCircle className="w-6 h-6 mb-2 text-gray-500" />
+                    <p>Add coins to your watchlist</p>
+                    <p className="text-sm">Drag and drop the coin toward the watchlist to add</p>
+                </div>
+            ) : <CryptoTable data={data} canBeEdited={true} />}
         </div>
     )
 }

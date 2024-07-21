@@ -1,7 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/store/store';
 import ExploreTable from '@/components/Explore/ExploreTable';
+import { setCoinsA } from '@/lib/store/features/dragable/coinsTableA';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
 
 // ExploreTableShimmer Component
 function ExploreTableShimmer() {
@@ -27,11 +31,22 @@ function ExploreTableShimmer() {
 }
 
 // Pagination Component
-function Pagination({ pageNo, setPageNo }) {
+function Pagination({ pageNo, setPageNo }: { pageNo: number, setPageNo: React.Dispatch<React.SetStateAction<number>> }) {
     return (
         <div className="flex justify-around m-10">
-            <button onClick={() => setPageNo(prevPageNo => Math.max(prevPageNo - 1, 1))} disabled={pageNo === 1}>Previous</button>
-            <button onClick={() => setPageNo(prevPageNo => prevPageNo + 1)}>Next</button>
+            <button 
+                onClick={() => setPageNo(prevPageNo => Math.max(prevPageNo - 1, 1))} 
+                disabled={pageNo === 1}
+                className={`flex items-center ${pageNo === 1 ? 'text-gray-400' : 'text-blue-500'}`}
+            >
+                <FaArrowLeft className="mr-2" /> Previous
+            </button>
+            <button 
+                onClick={() => setPageNo(prevPageNo => prevPageNo + 1)}
+                className="flex items-center text-blue-500"
+            >
+                Next <FaArrowRight className="ml-2" />
+            </button>
         </div>
     );
 }
@@ -39,33 +54,40 @@ function Pagination({ pageNo, setPageNo }) {
 // Main Page Component
 function Page() {
     const [pageNo, setPageNo] = useState(1);
-    const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useAppDispatch();
+    const coinsTableA = useAppSelector((state) => state.coinsTableA.pages);
+    const pageData = coinsTableA[pageNo];
 
     useEffect(() => {
+        if (pageData) {
+            setIsLoading(false);
+            return;
+        }
+
         setIsLoading(true);
         const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&category=layer-1&order=market_cap_desc&per_page=20&page=${pageNo}&price_change_percentage=24h%2C7d%2C30d%2C1y`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                setData(data);
+                dispatch(setCoinsA({ pageNo, coins: data }));
                 setIsLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
                 setIsLoading(false);
             });
-    }, [pageNo]);
+    }, [pageNo, dispatch, pageData]);
 
     // Use isLoading to conditionally render
-    if (isLoading || data.length == 0) {
+    if (isLoading || !pageData) {
         return <ExploreTableShimmer />;
     }
 
     return (
         <div className='p-8'>
             <div className='text-3xl font-medium mb-6'>Explore Coins</div>
-            <ExploreTable data={data} />
+            <ExploreTable data={pageData} pageNo={pageNo} />
             <Pagination pageNo={pageNo} setPageNo={setPageNo} />
         </div>
     );

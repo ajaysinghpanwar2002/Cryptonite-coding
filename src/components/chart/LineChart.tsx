@@ -32,11 +32,10 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
             console.error("Invalid entry format: each entry should be an array with at least two elements.");
             return "Invalid date";
         }
-        // Convert timestamp to date and time
-        return new Date(entry[0] * 1000).toLocaleString('en-US', {
-            year: 'numeric', // numeric, 2-digit
-            month: 'numeric', // numeric, 2-digit, long, short, narrow
-            day: 'numeric', // numeric, 2-digit
+        return new Date(entry[0] * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
         });
     });
 
@@ -51,6 +50,11 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
         }),
         borderColor: `rgba(${75 + index * 50}, 192, 192, 1)`,
         backgroundColor: `rgba(${75 + index * 50}, 192, 192, 0.2)`,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        pointStyle: 'circle',
     }));
 
     const chartData = {
@@ -60,18 +64,98 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    font: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    usePointStyle: true,
+                    padding: 20,
+                },
             },
-            title: {
-                display: false,
-                text: 'Market Cap Prices',
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat('en-IN', {
+                                style: 'currency',
+                                currency: 'INR',
+                                maximumFractionDigits: 2,
+                            }).format(context.parsed.y * 1e7); // Convert crores to actual value
+                        }
+                        return label;
+                    }
+                },
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                titleFont: {
+                    size: 16,
+                    family: 'Arial, sans-serif',
+                },
+                bodyFont: {
+                    size: 14,
+                    family: 'Arial, sans-serif',
+                },
+                cornerRadius: 5,
+                caretSize: 6,
+                xPadding: 10,
+                yPadding: 10,
+            },
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false,
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                        family: 'Arial, sans-serif',
+                    },
+                    color: '#666',
+                },
+            },
+            y: {
+                grid: {
+                    color: '#eee',
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                        family: 'Arial, sans-serif',
+                    },
+                    color: '#666',
+                    callback: function (value) {
+                        return new Intl.NumberFormat('en-IN', {
+                            maximumFractionDigits: 2,
+                        }).format(value) + ' Cr'; // Format with commas and append 'Cr'
+                    },
+                    beginAtZero: true,
+                },
+                title: {
+                    display: true,
+                    text: 'Value in Crores',
+                    font: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                },
             },
         },
     };
 
-    return <Line data={chartData} options={options} />;
+    return (
+        <div className="relative w-full h-96">
+            <Line data={chartData} options={options} />
+        </div>
+    );
 };
 
 export default LineChart;
