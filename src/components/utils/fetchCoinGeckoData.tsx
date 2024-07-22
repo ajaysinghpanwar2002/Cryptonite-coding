@@ -7,6 +7,11 @@ export async function fetchCoinGeckoData(url: string) {
             "x-cg-demo-api-key": "CG-LCeYynUJQjxDmuf3QM42BQmt",
         }
     });
+
+    if (response.status === 429) {
+        throw new Error('Too Many Requests');
+    }
+    
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }

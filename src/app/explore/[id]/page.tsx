@@ -134,8 +134,12 @@ const fetchCoinGeckoDataWithDelay = (url: string) => {
             try {
                 const data = await fetchCoinGeckoData(url);
                 resolve(data);
-            } catch (error) {
-                reject(error);
+            } catch (error:any) {
+                if (error.message === 'Too Many Requests') {
+                    queueRequest(request);
+                } else {
+                    reject(error);
+                }
             }
         };
         queueRequest(request);
@@ -146,8 +150,8 @@ const fetchCoinGeckoDataWithDelay = (url: string) => {
 function Page({ params }: { params: any }) {
     const [marketCapProduct, setMarketCapProduct] = useState<CoinMarketData[]>([]);
     const [productDetails, setProductDetails] = useState<any>({});
-    const [isLoading, setIsLoading] = useState(false);
-    const [marketCapLoading, setMarketCapLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [marketCapLoading, setMarketCapLoading] = useState(true);
     const currency = 'inr';
     const currentUnixTimestamp = Math.floor(Date.now() / 1000);
     const coinName = params.id;
@@ -159,23 +163,7 @@ function Page({ params }: { params: any }) {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const fetchData = async () => {
-            setMarketCapLoading(true);
-            try {
-                const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
-                setMarketCapProduct([data]);
-            } catch (error) {
-                console.error('Failed to fetch market cap data:', error);
-            } finally {
-                setMarketCapLoading(false);
-            }
-        };
-        fetchData();
-    }, [coinName, timeRange]);
-
-    useEffect(() => {
         const fetchProductDetails = async () => {
-            setIsLoading(true);
             dispatch(addCoin(params.id));
             try {
                 const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
@@ -186,8 +174,21 @@ function Page({ params }: { params: any }) {
                 setIsLoading(false);
             }
         };
+
+        const fetchMarketCapData = async () => {
+            try {
+                const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
+                setMarketCapProduct([data]);
+            } catch (error) {
+                console.error('Failed to fetch market cap data:', error);
+            } finally {
+                setMarketCapLoading(false);
+            }
+        };
+
         fetchProductDetails();
-    }, [coinName]);
+        delay(3000).then(fetchMarketCapData);
+    }, [coinName, timeRange]);
 
     if (isLoading) return <ShimmerProductDetails />;
     // if (marketCapLoading) return <ShimmerEffect />;
@@ -201,9 +202,7 @@ function Page({ params }: { params: any }) {
                 <DataTypeButtons dataType={dataType} setDataType={setDataType} />
             </div>
             <div className='mt-5 p-4'>
-                {marketCapProduct.length > 0 && (
-                    <LineChart data={marketCapProduct.map(d => d[dataType])} coinNames={[coinName]} />
-                )}
+                {marketCapLoading ? <ShimmerEffect /> : <LineChart data={marketCapProduct.map(d => d[dataType])} coinNames={[coinName]} />}
             </div>
             <div className='flex items-center justify-center mt-4'>
                 <TimeRangeButtons timeRange={timeRange} setTimeRange={setTimeRange} timeLabels={timeLabels} />
