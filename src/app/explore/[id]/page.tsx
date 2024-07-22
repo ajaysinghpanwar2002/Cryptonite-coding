@@ -164,6 +164,7 @@ function Page({ params }: { params: any }) {
 
     useEffect(() => {
         const fetchProductDetails = async () => {
+            setIsLoading(true);
             dispatch(addCoin(params.id));
             try {
                 const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
@@ -178,6 +179,7 @@ function Page({ params }: { params: any }) {
         };
 
         const fetchMarketCapData = async () => {
+            // setMarketCapLoading(true);
             try {
                 const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
                 setMarketCapProduct([data]);
