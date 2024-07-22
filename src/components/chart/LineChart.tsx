@@ -89,7 +89,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
                                 style: 'currency',
                                 currency: 'INR',
                                 maximumFractionDigits: 2,
-                            }).format(context.parsed.y * 1e7); // Convert crores to actual value
+                            }).format(context.parsed.y);
                         }
                         return label;
                     }
@@ -132,16 +132,22 @@ const LineChart: React.FC<LineChartProps> = ({ data, coinNames }) => {
                         family: 'Arial, sans-serif',
                     },
                     color: '#666',
-                    callback: function (value:any) {
-                        return new Intl.NumberFormat('en-IN', {
-                            maximumFractionDigits: 2,
-                        }).format(value) + ' Cr'; // Format with commas and append 'Cr'
+                    callback: function (value: any) {
+                        if (value >= 1e9) {
+                            return (value / 1e9).toFixed(2) + 'B';
+                        } else if (value >= 1e6) {
+                            return (value / 1e6).toFixed(2) + 'M';
+                        } else if (value >= 1e3) {
+                            return (value / 1e3).toFixed(2) + 'K';
+                        } else {
+                            return value.toFixed(2);
+                        }
                     },
                     beginAtZero: true,
                 },
                 title: {
                     display: true,
-                    text: 'Value in Crores',
+                    text: 'Value in Rupees',
                     font: {
                         size: 14,
                         family: 'Arial, sans-serif',
