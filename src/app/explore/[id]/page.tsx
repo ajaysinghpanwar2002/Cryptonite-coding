@@ -117,7 +117,7 @@ const processQueue = async () => {
     const request = requestQueue.shift();
     if (request) {
         await request();
-        await delay(1000);  // Delay of 1000 milliseconds (1 second) between requests
+        await delay(3000);  // Delay of 1000 milliseconds (1 second) between requests
     }
     isRequestInProgress = false;
     processQueue();
@@ -134,7 +134,7 @@ const fetchCoinGeckoDataWithDelay = (url: string) => {
             try {
                 const data = await fetchCoinGeckoData(url);
                 resolve(data);
-            } catch (error:any) {
+            } catch (error: any) {
                 if (error.message === 'Too Many Requests') {
                     queueRequest(request);
                 } else {
@@ -168,10 +168,12 @@ function Page({ params }: { params: any }) {
             try {
                 const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
                 setProductDetails(data);
-            } catch (error) {
-                console.error('Failed to fetch product details:', error);
-            } finally {
                 setIsLoading(false);
+            } catch (error:any) {
+                console.error('Failed to fetch product details:', error);
+                if (error.message !== 'Too Many Requests') {
+                    setIsLoading(false);
+                }
             }
         };
 
@@ -179,10 +181,12 @@ function Page({ params }: { params: any }) {
             try {
                 const data = await fetchCoinGeckoDataWithDelay(`https://api.coingecko.com/api/v3/coins/${coinName}/market_chart/range?vs_currency=${currency}&from=${calculateTimeRange}&to=${currentUnixTimestamp}`);
                 setMarketCapProduct([data]);
-            } catch (error) {
-                console.error('Failed to fetch market cap data:', error);
-            } finally {
                 setMarketCapLoading(false);
+            } catch (error:any) {
+                console.error('Failed to fetch market cap data:', error);
+                if (error.message !== 'Too Many Requests') {
+                    setMarketCapLoading(false);
+                }
             }
         };
 
