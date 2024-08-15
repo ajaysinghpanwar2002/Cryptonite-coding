@@ -1,3 +1,5 @@
+[Core Features (slides)](https://docs.google.com/presentation/d/1UIEhjHRqw9TyPm8B_WLwItkyefb8QC3aInwb4g-2QHE/edit?usp=sharing)
+
 # Crypto Tracker
 
 A powerful cryptocurrency tracking application built with Next.js, TypeScript, and Redux Toolkit. This app allows users to monitor global market trends, explore individual cryptocurrencies, and manage a personalized watchlist.
